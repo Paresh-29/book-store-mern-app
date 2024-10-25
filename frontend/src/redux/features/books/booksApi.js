@@ -4,14 +4,14 @@ import getBaseUrl from '../../../utils/baseURL';
 const baseQuery = fetchBaseQuery({
     baseUrl: `${getBaseUrl()}/api/books`,
     credentials: 'include',
-    prepareHeaders: (Headers) => {
+    prepareHeaders: (headers, { getState }) => {  // Changed Headers to headers (case-sensitive)
         const token = localStorage.getItem('token');
         if (token) {
-            Headers.set('Authorization', `Bearer ${token}`);
+            headers.set('Authorization', `Bearer ${token}`);  // Changed Headers to headers
         }
-        return Headers;
+        return headers;  // Changed Headers to headers
     }
-})
+});
 
 const booksApi = createApi({
     reducerPath: 'bookApi',
@@ -19,13 +19,17 @@ const booksApi = createApi({
     tagTypes: ['Books'],
     endpoints: (builder) => ({
         fetchAllBooks: builder.query({
-            query: () =>`/`,
-            providesTags: ["Books"]
+            query: () => `/`,
+            providesTags: ["Books"],
+            // Add error handling
+            transformErrorResponse: (response, meta, arg) => response.data
         }),
+
         fetchBookById: builder.query({
             query: (id) => `/${id}`,
-            providesTags: (result, error, id) => [ {type: 'Books', id: id} ]
+            providesTags: (result, error, id) => [{ type: 'Books', id }]
         }),
+
         addBook: builder.mutation({
             query: (newBook) => ({
                 url: `/create-book`,
@@ -35,7 +39,7 @@ const booksApi = createApi({
             invalidatesTags: ["Books"]
         }),
 
-        updateBook : builder.mutation({
+        updateBook: builder.mutation({
             query: ({id, ...rest}) => ({
                 url: `/edit/${id}`,
                 method: "PUT",
@@ -51,12 +55,23 @@ const booksApi = createApi({
             query: (id) => ({
                 url: `/${id}`,
                 method: "DELETE",
+                headers: {
+                    "Content-type": "application/json"
+                }
             }),
-            invalidatesTags: ["Books"]
+            invalidatesTags: ["Books"],
+            // Add error handling
+            transformErrorResponse: (response, meta, arg) => response.data
         }),
     })
-})
+});
 
-export const { useFetchAllBooksQuery, useFetchBookByIdQuery, useAddBookMutation, useUpdateBookMutation, useDeleteBookMutation } = booksApi
+export const { 
+    useFetchAllBooksQuery, 
+    useFetchBookByIdQuery, 
+    useAddBookMutation, 
+    useUpdateBookMutation, 
+    useDeleteBookMutation 
+} = booksApi;
 
-export default booksApi
+export default booksApi;
