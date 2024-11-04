@@ -1,7 +1,66 @@
-import React from 'react'
-import InputField from '../addBooks/InputField'
-import SelectField from '../addBooks/SelectField'
+import { useParams } from "react-router-dom";
+import { useFetchBookByIdQuery, useUpdateBookMutation } from "../../../redux/features/books/booksApi";
+import { useForm } from "react-hook-form";
+import { useEffect } from "react";
+import axios from "axios";
+import Swal from "sweetalert2";
+import Loading from "../../../components/Loading";
+import InputField from "../addBooks/InputField";
+import SelectField from "../addBooks/SelectField";
+
+
 const UpdateBook = () => {
+  const { id } = useParams();
+  const { data: bookData, isLoading, isError, refetch } = useFetchBookByIdQuery(id);
+  // console.log(bookData)
+  const [updateBook] = useUpdateBookMutation();
+  const { register, handleSubmit, setValue, reset } = useForm();
+  useEffect(() => {
+    if (bookData?.books) {
+      setValue('title', bookData.books.title);
+      setValue('description', bookData.books.description);
+      setValue('category', bookData?.books.category);
+      setValue('trending', bookData.books.trending);
+      setValue('oldPrice', bookData.books.oldPrice);
+      setValue('newPrice', bookData.books.newPrice);
+      setValue('coverImage', bookData.books.coverImage)
+    }
+  }, [bookData, setValue])
+
+  const onSubmit = async (data) => {
+    const updateBookData = {
+      title: data.title,
+      description: data.description,
+      category: data.category,
+      trending: data.trending,
+      oldPrice: Number(data.oldPrice),
+      newPrice: Number(data.newPrice),
+      coverImage: data.coverImage || bookData.coverImage,
+    };
+    try {
+      await axios.put(`${getBaseUrl()}/api/books/edit/${id}`, updateBookData, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      })
+      Swal.fire({
+        title: "Book Updated",
+        text: "Your book is updated successfully!",
+        icon: "success",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, It's Okay!"
+      });
+      await refetch()
+    } catch (error) {
+      console.log("Failed to update book.");
+      alert("Failed to update book.");
+    }
+  }
+  if (isLoading) return <Loading />
+  if (isError) return <div>Error fetching book data</div>
   return (
     <div className="max-w-lg mx-auto md:p-6 p-3 bg-white rounded-lg shadow-md">
       <h2 className="text-2xl font-bold text-gray-800 mb-4">Update Book</h2>

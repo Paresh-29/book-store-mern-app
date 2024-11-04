@@ -15,23 +15,9 @@ import { useFetchAllBooksQuery } from '../../redux/features/books/booksApi';
 
 const Recommened = () => {
    
-const {data, isLoading, error} = useFetchAllBooksQuery();
 
-const books = data?.books || [];
-console.log(`recommended`, books);
-
-if (isLoading) {
-  return <div className="py-16">Loading recommended books...</div>;
-}
-
-if (error) {
-  return <div className="py-16 text-red-500">Error loading recommended books: {error.message}</div>;
-}
-
-if (!books.length) {
-  return <div className="py-16">No recommended books available.</div>;
-}
-
+    const {data, isLoading, isError} = useFetchAllBooksQuery();
+    const books = data?.books || [];
   return (
     <div className='py-16'>
          <h2 className='text-3xl font-semibold mb-6'>Recommended for you </h2>

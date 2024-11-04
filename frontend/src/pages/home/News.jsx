@@ -1,18 +1,17 @@
 import React from 'react'
-import { Swiper, SwiperSlide } from 'swiper/react'
-import { Link } from 'react-router-dom';
-
+import { Swiper, SwiperSlide } from 'swiper/react';
 
 // Import Swiper styles
 import 'swiper/css';
 import 'swiper/css/pagination';
-import { Navigation, Pagination } from 'swiper/modules';
+import 'swiper/css/navigation';
+import { Pagination, Navigation } from 'swiper/modules';
 
 import news1 from "../../assets/news/news-1.png"
 import news2 from "../../assets/news/news-2.png"
 import news3 from "../../assets/news/news-3.png"
 import news4 from "../../assets/news/news-4.png"
-
+import { Link } from 'react-router-dom';
 
 const news = [
     {
@@ -50,7 +49,8 @@ const news = [
 const News = () => {
   return (
     <div className='py-16'>
-        <h2 className='text-3xl font-semibold mb-6'>News</h2>
+        <h2 className='text-3xl font-semibold mb-6'>News </h2>
+
         <Swiper
         slidesPerView={1}
         spaceBetween={30}
@@ -80,20 +80,18 @@ const News = () => {
                         {/* content */}
                         <div className='py-4'>
                             <Link to="/">
-                                <h3 className='text-lg font-medium hover:text-blue-600 mb-4'>{item.title}</h3>
+                                 <h3 className='text-lg font-medium hover:text-blue-500 mb-4'>{item.title}</h3>
                             </Link>
-                            <div className='w-12 bg-primary h-[4px] mb-5'>
-
-                            </div>
-                            <p className='text-sm text-gray-500'>{item.description}</p>
+                            <div className='w-12 h-[4px] bg-primary mb-5'></div>
+                            <p className='text-sm text-gray-600'>{item.description}</p>
                         </div>
 
                         <div className='flex-shrink-0'>
-                            <img src={item.image} alt="" className='w-full object-cover'/>
+                            <img src={item.image} alt=""  className='w-full object-cover'/>
                         </div>
                     </div>
                 </SwiperSlide>
-            ))
+            ) )
         }
       </Swiper>
     </div>
