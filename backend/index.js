@@ -10,7 +10,7 @@ require('dotenv').config()
 //middlware
 app.use(express.json())
 app.use(cors({
-    origin: ['http://localhost:5173'], // Removed trailing slash
+    origin: ['http://localhost:5173','https://book-store-mern-app-frontend-rk01.onrender.com'], // Removed trailing slash
     credentials: true
   }));
 
